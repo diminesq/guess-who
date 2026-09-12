@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess Who ?!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 1. LOBBY -->
+  <div id="lobbyScreen" class="screen active">
+    <div class="header-wrap">
+      <h1 class="title-badge">Guess Who ?!</h1>
+    </div>
+
+    <div class="lobby-card">
+      <div class="left-col">
+        <div class="field-box">
+          <label class="field-label" for="playerName">Nume:</label>
+          <input type="text" id="playerName" class="field-input" placeholder="ex: Rareș" autocomplete="off">
+        </div>
+
+        <div class="field-box">
+          <label class="field-label" for="gameCode">Cod:</label>
+          <input 
+            type="text" 
+            id="gameCode" 
+            class="field-input" 
+            placeholder="0000" 
+            maxlength="4" 
+            inputmode="numeric" 
+            autocomplete="off">
+        </div>
+
+        <button id="startLinkBtn" class="link-btn">Link</button>
+      </div>
+
+      <div class="right-col">
+        <div class="select-wrap">
+          <select id="categorySelect" class="select-styled">
+            <option value="" disabled selected>Alege Categoria</option>
+            <optgroup label="România">
+              <option value="singers-ro">Singers - România</option>
+              <option value="youtuberi-ro">Youtuberi - România</option>
+              <option value="actori-ro">Actori - România</option>
+              <option value="mix-ro">Mix - România</option>
+            </optgroup>
+            <optgroup label="Internațional (Orice în afară de RO)">
+              <option value="singers-intl">Singers - Orice în afară de România</option>
+              <option value="youtuberi-intl">Youtuberi - Orice în afară de România</option>
+              <option value="actori-intl">Actori - Orice în afară de România</option>
+              <option value="mix-intl">Mix - Orice în afară de România</option>
+            </optgroup>
+            <optgroup label="Mix Global (RO + Restul)">
+              <option value="trapperi-all">Trapperi - Mix RO & Restul</option>
+              <option value="youtuberi-all">Youtuberi - Mix RO & Restul</option>
+              <option value="actori-all">Actori - Mix RO & Restul</option>
+              <option value="mix-all">Mix Total (Tot)</option>
+            </optgroup>
+          </select>
+          <span class="select-arrow">↓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. GAME BOARD -->
+  <div id="gameScreen" class="screen">
+    <div class="game-nav">
+      <button id="backBtn" class="nav-btn">← Lobby</button>
+      <div id="targetStatus" class="status-badge">Alege un personaj secret...</div>
+      <div id="playerTag" class="player-badge">Jucător</div>
+    </div>
+
+    <div id="grid" class="board-grid"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
