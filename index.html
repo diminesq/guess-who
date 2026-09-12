@@ -6,8 +6,280 @@
   <title>Guess Who ?!</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card-bg: #1a1d26;
+      --surface: #ffffff;
+      --text: #ffffff;
+      --text-dark: #0f1117;
+      --accent: #ffea79;
+      --border: #000000;
+      --shadow: 4px 4px 0px #000000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(#252a38 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* LOBBY */
+    .header-wrap {
+      text-align: center;
+      width: 100%;
+    }
+
+    .title-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--text-dark);
+      font-size: 34px;
+      font-weight: 900;
+      padding: 10px 32px;
+      border: 4px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      transform: rotate(-1.5deg);
+      margin-bottom: 40px;
+    }
+
+    .lobby-card {
+      background: var(--card-bg);
+      border: 4px solid var(--border);
+      box-shadow: 8px 8px 0px #000;
+      border-radius: 20px;
+      padding: 36px;
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      flex: 1;
+    }
+
+    .field-box {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 10px 14px;
+    }
+
+    .field-label {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-right: 10px;
+    }
+
+    .field-input {
+      border: none;
+      outline: none;
+      font-size: 18px;
+      font-weight: 700;
+      width: 100%;
+      background: transparent;
+    }
+
+    .link-btn {
+      margin-top: 6px;
+      align-self: flex-start;
+      background: var(--accent);
+      color: var(--text-dark);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      font-size: 18px;
+      font-weight: 800;
+      padding: 12px 36px;
+      cursor: pointer;
+    }
+
+    .right-col {
+      flex: 1;
+    }
+
+    .select-wrap {
+      position: relative;
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .select-styled {
+      width: 100%;
+      padding: 14px 40px 14px 14px;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-dark);
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text-dark);
+      pointer-events: none;
+    }
+
+    /* GAME BOARD */
+    .game-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: var(--card-bg);
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 14px;
+      padding: 12px 20px;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      background: #ff6b6b;
+      color: #fff;
+      border: 3px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .my-card-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      color: #000;
+      padding: 4px 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .my-card-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* GRID COMPLET EGAL ȘI UNIFORM */
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+
+    .card {
+      position: relative;
+      background: #161922;
+      border: 3px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 1 / 1.15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 6px 4px 6px;
+      transition: transform 0.1s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-svg-wrap {
+      width: 70%;
+      height: 65%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-svg-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .card-label {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 4px 2px;
+      border-radius: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card.eliminated {
+      opacity: 0.15;
+      filter: grayscale(100%);
+      transform: scale(0.95);
+      border-style: dashed;
+      box-shadow: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,14 +298,7 @@
 
         <div class="field-box">
           <label class="field-label" for="gameCode">Cod:</label>
-          <input 
-            type="text" 
-            id="gameCode" 
-            class="field-input" 
-            placeholder="0000" 
-            maxlength="4" 
-            inputmode="numeric" 
-            autocomplete="off">
+          <input type="text" id="gameCode" class="field-input" placeholder="0000" maxlength="4" autocomplete="off">
         </div>
 
         <button id="startLinkBtn" class="link-btn">Link</button>
@@ -49,17 +314,17 @@
               <option value="actori-ro">Actori - România</option>
               <option value="mix-ro">Mix - România</option>
             </optgroup>
-            <optgroup label="Internațional (Orice în afară de RO)">
-              <option value="singers-intl">Singers - Orice în afară de România</option>
-              <option value="youtuberi-intl">Youtuberi - Orice în afară de România</option>
-              <option value="actori-intl">Actori - Orice în afară de România</option>
-              <option value="mix-intl">Mix - Orice în afară de România</option>
+            <optgroup label="Internațional (Fără RO)">
+              <option value="singers-intl">Singers - Orice în afară de RO</option>
+              <option value="youtuberi-intl">Youtuberi - Orice în afară de RO</option>
+              <option value="actori-intl">Actori - Orice în afară de RO</option>
+              <option value="mix-intl">Mix - Orice în afară de RO</option>
             </optgroup>
-            <optgroup label="Mix Global (RO + Restul)">
+            <optgroup label="Mix Global">
               <option value="trapperi-all">Trapperi - Mix RO & Restul</option>
               <option value="youtuberi-all">Youtuberi - Mix RO & Restul</option>
               <option value="actori-all">Actori - Mix RO & Restul</option>
-              <option value="mix-all">Mix Total (Tot)</option>
+              <option value="mix-all">Mix Total</option>
             </optgroup>
           </select>
           <span class="select-arrow">↓</span>
@@ -72,13 +337,166 @@
   <div id="gameScreen" class="screen">
     <div class="game-nav">
       <button id="backBtn" class="nav-btn">← Lobby</button>
-      <div id="targetStatus" class="status-badge">Alege un personaj secret...</div>
-      <div id="playerTag" class="player-badge">Jucător</div>
+      <div id="targetStatus" class="status-badge">Alege-ți personajul dând click pe el!</div>
+      
+      <div id="myCardContainer" class="my-card-display" style="display: none;">
+        <div id="myCardAvatar" class="my-card-avatar"></div>
+        <div>
+          <span style="font-size: 9px; font-weight: 800; color: #555;">PERSONAJUL TĂU:</span><br>
+          <span id="myCardName" style="font-size: 12px; font-weight: 900;">-</span>
+        </div>
+      </div>
     </div>
 
     <div id="grid" class="board-grid"></div>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    // Generator direct de ilustrații SVG (nu depinde de internet sau linkuri externe)
+    function createAvatarSVG(color, initials) {
+      return `
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="${color}" stroke="#000" stroke-width="4"/>
+          <circle cx="36" cy="42" r="5" fill="#000"/>
+          <circle cx="64" cy="42" r="5" fill="#000"/>
+          <path d="M 38 64 Q 50 74 62 64" stroke="#000" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <text x="50" y="24" font-size="14" font-weight="900" text-anchor="middle" fill="#000">${initials}</text>
+        </svg>
+      `;
+    }
+
+    const colors = ["#ff7675", "#74b9ff", "#55efc4", "#ffeaa7", "#a29bfe", "#fd79a8", "#fab1a0", "#00cec9"];
+
+    const namesDB = {
+      "singers-ro": ["Inna", "Smiley", "Delia", "Connect-R", "Andra", "Irina Rimes", "Carla's Dreams", "The Motans", "Alex Velea", "Antonia", "Marius Moga", "Dan Balan", "Loredana", "Florin Salam", "Theo Rose", "Mira", "Alina Eremia", "Horia Brenciu", "Stefan Banica", "Tudor Chirila"],
+      "trapperi-ro": ["Ian", "Oscar", "YNY Sebi", "Berechet", "Killa Fonic", "Nane", "Rava", "IDK", "AlbertNBN", "MGK666", "Gheboasa", "Azel", "Mobtrap", "Amuly", "PRNY", "Marko Glass", "Bvcovia", "Tussin", "Aerozen", "OG Eastbull"],
+      "youtuberi-ro": ["Selly", "Dorian Popa", "Faiar Silviu", "Zaiafet", "Creative Monkeyz", "Maxsialtele", "LecturaDeLaA-Z", "Ilie's Vlogs", "Bercea", "Atentie Cad Mere", "Silviu Gherman", "Cristi Munteanu", "Vlad Munteanu", "Noaptea Tarziu", "Zmenta", "Mitzuu", "Pain", "Gami OS", "Dia Condurache", "Denis Petcu"],
+      "actori-ro": ["Florin Piersic", "Mihai Bendeac", "Mihai Bobonete", "Marcel Iures", "Maia Morgenstern", "Horatiu Malaele", "Gheorghe Dinica", "Micutzu", "Adrian Vancica", "Serban Pavlu", "Vlad Ivanov", "Pavel Bartos", "Andi Vasluianu", "Dragos Bucur", "Costel Bojog", "Catalin Bordea", "Claudiu Bleont", "Radu Beligan", "Victor Rebengiuc", "Gheorghe Ifrim"],
+      "singers-intl": ["The Weeknd", "Dua Lipa", "Eminem", "Drake", "Billie Eilish", "Taylor Swift", "Bruno Mars", "Ed Sheeran", "Rihanna", "Post Malone", "Ariana Grande", "Justin Bieber", "Kendrick Lamar", "Kanye West", "Harry Styles", "Adele", "Beyonce", "Lady Gaga", "Justin Timberlake", "Bad Bunny"],
+      "trapperi-intl": ["Travis Scott", "Central Cee", "Playboi Carti", "Future", "Lil Uzi Vert", "21 Savage", "Gunna", "Lil Baby", "Young Thug", "Pop Smoke", "Juice WRLD", "XXXTentacion", "Trippie Redd", "Roddy Ricch", "Chief Keef", "Gucci Mane", "Quavo", "Offset", "Lil Yachty", "Lil Durk"],
+      "youtuberi-intl": ["MrBeast", "IShowSpeed", "PewDiePie", "Kai Cenat", "Logan Paul", "KSI", "Markiplier", "Jacksepticeye", "Airrack", "DanTDM", "Dude Perfect", "Casey Neistat", "Veritasium", "MKBHD", "LazarBeam", "Ali-A", "Ninja", "Pokimane", "Valkyrae", "Dream"],
+      "actori-intl": ["Leonardo DiCaprio", "Cillian Murphy", "Zendaya", "Brad Pitt", "Johnny Depp", "Robert Downey Jr", "Keanu Reeves", "Tom Cruise", "Christian Bale", "Tom Hanks", "Margot Robbie", "Joaquin Phoenix", "Ryan Gosling", "Al Pacino", "Morgan Freeman", "Denzel Washington", "Timothee Chalamet", "Pedro Pascal", "Scarlett Johansson", "Samuel L Jackson"]
+    };
+
+    let gameState = "SELECT_OWN";
+    let myCharacter = null;
+    let currentBoard = [];
+
+    const lobbyScreen = document.getElementById('lobbyScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const gameCode = document.getElementById('gameCode');
+    const categorySelect = document.getElementById('categorySelect');
+    const startLinkBtn = document.getElementById('startLinkBtn');
+    const backBtn = document.getElementById('backBtn');
+    const grid = document.getElementById('grid');
+    const targetStatus = document.getElementById('targetStatus');
+    const myCardContainer = document.getElementById('myCardContainer');
+    const myCardAvatar = document.getElementById('myCardAvatar');
+    const myCardName = document.getElementById('myCardName');
+
+    gameCode.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    startLinkBtn.addEventListener('click', () => {
+      const cat = categorySelect.value;
+      const code = gameCode.value.trim();
+
+      if (!cat) {
+        alert('Alege o categorie din listă!');
+        return;
+      }
+      if (code.length !== 4) {
+        alert('Codul trebuie să fie format din 4 cifre!');
+        return;
+      }
+
+      lobbyScreen.classList.remove('active');
+      gameScreen.classList.add('active');
+      initGame(cat);
+    });
+
+    backBtn.addEventListener('click', () => {
+      gameScreen.classList.remove('active');
+      lobbyScreen.classList.add('active');
+    });
+
+    function initGame(category) {
+      let namesList = [];
+
+      if (category === 'mix-all') {
+        Object.values(namesDB).forEach(arr => namesList.push(...arr));
+      } else if (category === 'mix-ro') {
+        namesList.push(...namesDB['singers-ro'], ...namesDB['trapperi-ro'], ...namesDB['youtuberi-ro'], ...namesDB['actori-ro']);
+      } else if (category === 'mix-intl') {
+        namesList.push(...namesDB['singers-intl'], ...namesDB['trapperi-intl'], ...namesDB['youtuberi-intl'], ...namesDB['actori-intl']);
+      } else if (category === 'trapperi-all') {
+        namesList.push(...namesDB['trapperi-ro'], ...namesDB['trapperi-intl']);
+      } else if (category === 'youtuberi-all') {
+        namesList.push(...namesDB['youtuberi-ro'], ...namesDB['youtuberi-intl']);
+      } else if (category === 'actori-all') {
+        namesList.push(...namesDB['actori-ro'], ...namesDB['actori-intl']);
+      } else if (namesDB[category]) {
+        namesList.push(...namesDB[category]);
+      } else {
+        namesList.push(...namesDB['youtuberi-ro']);
+      }
+
+      // Amestecă și completează la exact 28 de cadrane egale
+      let shuffled = [...namesList].sort(() => 0.5 - Math.random());
+      while (shuffled.length < 28) {
+        shuffled = shuffled.concat(namesList);
+      }
+
+      currentBoard = shuffled.slice(0, 28).map((name, i) => {
+        const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+        const color = colors[i % colors.length];
+        return {
+          name: name,
+          svg: createAvatarSVG(color, initials),
+          color: color
+        };
+      });
+
+      gameState = "SELECT_OWN";
+      myCharacter = null;
+      myCardContainer.style.display = "none";
+      targetStatus.innerHTML = "👉 <b>Pasul 1:</b> Fă click pe cartonașul tău secret!";
+
+      drawBoard();
+    }
+
+    function drawBoard() {
+      grid.innerHTML = '';
+
+      currentBoard.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-svg-wrap">${item.svg}</div>
+          <div class="card-label">${item.name}</div>
+        `;
+
+        card.addEventListener('click', () => {
+          if (gameState === "SELECT_OWN") {
+            myCharacter = item;
+            myCardAvatar.innerHTML = item.svg;
+            myCardName.textContent = item.name;
+            myCardContainer.style.display = "flex";
+
+            gameState = "PLAYING";
+            targetStatus.innerHTML = "🎯 <b>Joc în desfășurare:</b> Elimină cărțile pe rând făcând click pe ele.";
+            alert(`Ți-ai ales personajul: ${item.name}! A fost salvat în colțul de sus.`);
+            return;
+          }
+
+          // În timpul jocului: elimină / repune în joc
+          card.classList.toggle('eliminated');
+        });
+
+        grid.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>
