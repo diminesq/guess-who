@@ -8,10 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 
-  <!-- ECRAN LOBBY -->
+  <!-- 1. ECRAN LOBBY -->
   <div id="lobbyScreen" class="screen active">
     <div class="header-wrap">
       <h1 class="title-badge">Guess Who ?!</h1>
@@ -31,7 +32,7 @@
           </div>
         </div>
 
-        <div class="select-col">
+        <div class="select-col" id="selectCol">
           <div class="select-wrap">
             <select id="categorySelect" class="select-styled">
               <option value="" disabled selected>Alege Categoria</option>
@@ -55,10 +56,11 @@
             </select>
             <span class="select-arrow">↓</span>
           </div>
+          <p id="roomNotice" class="room-notice"></p>
         </div>
       </div>
 
-      <!-- BUTOANELE PLAY & INVITE -->
+      <!-- BUTOANE LOBBY -->
       <div class="actions-row">
         <button id="playBtn" class="btn-play">Play</button>
         <button id="inviteBtn" class="btn-invite">
@@ -72,14 +74,21 @@
     </div>
   </div>
 
-  <!-- ECRAN JOC -->
+  <!-- 2. ECRAN JOC -->
   <div id="gameScreen" class="screen">
     <div class="game-nav">
       <button id="backBtn" class="nav-btn">← Lobby</button>
-      <div id="targetStatus" class="status-badge">👉 <b>Pasul 1:</b> Alege-ți cartonașul secret dând click pe el!</div>
+      
+      <!-- BUTOANELE DE COMUTARE: ELIMINĂ vs VERIFICĂ CARTONAȘUL FINAL -->
+      <div class="mode-controls" id="modeControls" style="display: none;">
+        <button id="modeEliminateBtn" class="btn-mode active">❌ Elimină jucători</button>
+        <button id="modeGuessBtn" class="btn-mode btn-wild-guess">🎯 Verifică cartonașul final</button>
+      </div>
+
+      <div id="targetStatus" class="status-badge">Așteptăm conectarea jucătorilor...</div>
 
       <div id="myCardContainer" class="my-card-display" style="display: none;">
-        <img id="myCardImg" src="" alt="Personaj secret" />
+        <img id="myCardImg" src="" alt="Personaj" />
         <div>
           <span style="font-size: 9px; font-weight: 800; color: #555;">PERSONAJUL TĂU:</span><br>
           <span id="myCardName" style="font-size: 13px; font-weight: 900; color: #000;">-</span>
@@ -87,8 +96,20 @@
       </div>
     </div>
 
-    <!-- GRILA CU CELE 28 DE CARTONAȘE (4 rânduri x 7 coloane) -->
     <div id="grid" class="board-grid"></div>
+  </div>
+
+  <!-- MODAL FINAL DE JOC -->
+  <div id="gameOverModal" class="game-modal" style="display: none;">
+    <div class="modal-card">
+      <h2 id="modalTitle" class="modal-title">🏆 AI CÂȘTIGAT!</h2>
+      <p id="modalDesc" class="modal-desc"></p>
+      <div class="modal-secret-preview">
+        <img id="modalCharImg" src="" alt="Secret" />
+        <span id="modalCharName"></span>
+      </div>
+      <button id="rematchBtn" class="btn-play" style="margin-top: 20px;">Joacă din nou (Rematch)</button>
+    </div>
   </div>
 
   <script src="app.js"></script>
