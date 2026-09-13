@@ -147,6 +147,14 @@ body {
   pointer-events: none;
 }
 
+.room-notice {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-top: 8px;
+  display: none;
+}
+
 /* BUTOANE LOBBY */
 .actions-row {
   display: flex;
@@ -165,11 +173,7 @@ body {
   font-weight: 800;
   padding: 10px 32px;
   cursor: pointer;
-  transition: transform 0.1s ease, filter 0.1s ease;
-}
-
-.btn-play:hover {
-  filter: brightness(1.05);
+  transition: transform 0.1s ease;
 }
 
 .btn-play:active {
@@ -177,7 +181,6 @@ body {
   box-shadow: 2px 2px 0px #000;
 }
 
-/* BUTONUL ALBASTRU INVITE */
 .btn-invite {
   background-color: #0088cc;
   color: #ffffff;
@@ -191,22 +194,13 @@ body {
   align-items: center;
   gap: 8px;
   box-shadow: 0 4px 12px rgba(0, 136, 204, 0.4);
-  transition: transform 0.1s ease, background-color 0.15s ease;
-}
-
-.btn-invite:hover {
-  background-color: #0077b5;
-}
-
-.btn-invite:active {
-  transform: scale(0.96);
 }
 
 .link-icon {
   stroke: #ffffff;
 }
 
-/* GAME NAV */
+/* GAME HEADER & CONTROLS */
 .game-nav {
   display: flex;
   justify-content: space-between;
@@ -218,6 +212,7 @@ body {
   border-radius: 14px;
   padding: 12px 20px;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .nav-btn {
@@ -225,10 +220,41 @@ body {
   color: #fff;
   border: 3px solid var(--border);
   border-radius: 8px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   font-weight: 800;
-  font-size: 14px;
   cursor: pointer;
+}
+
+.mode-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-mode {
+  background: #2b303c;
+  color: #fff;
+  border: 2px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-mode.active {
+  background: #ff4757;
+  border-color: #fff;
+}
+
+.btn-wild-guess {
+  background: #2ed573;
+  color: #000;
+}
+
+.btn-wild-guess.active {
+  background: #2ed573;
+  box-shadow: 0 0 10px #2ed573;
+  border-color: #fff;
 }
 
 .status-badge {
@@ -256,10 +282,10 @@ body {
   object-fit: cover;
 }
 
-/* BOARD GRID (4 randuri x 7 coloane) */
+/* GRILA CARTONAȘE */
 .board-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   width: 100%;
 }
@@ -275,7 +301,7 @@ body {
   aspect-ratio: 1 / 1.25;
   display: flex;
   flex-direction: column;
-  transition: transform 0.1s ease, border-color 0.1s ease;
+  transition: transform 0.1s ease;
 }
 
 .card:hover {
@@ -307,7 +333,7 @@ body {
   text-overflow: ellipsis;
 }
 
-/* CARTONAȘ ELIMINAT */
+/* STĂRI CARTONAȘ */
 .card.eliminated {
   opacity: 0.18;
   filter: grayscale(100%);
@@ -324,14 +350,77 @@ body {
   font-size: 46px;
   color: #ff4757;
   font-weight: 900;
-  text-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+
+body.guess-mode .card:not(.eliminated):hover {
+  border-color: #2ed573;
+  transform: scale(1.04);
+}
+
+/* MODAL FINAL DE JOC */
+.game-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-card {
+  background: var(--card-bg);
+  border: 4px solid var(--border);
+  box-shadow: 10px 10px 0px #000;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  max-width: 440px;
+  width: 90%;
+}
+
+.modal-title {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.modal-desc {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.modal-secret-preview {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #111;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+}
+
+.modal-secret-preview img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+#modalCharName {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
 }
 
 @media (max-width: 900px) {
   .board-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .form-row {
-    flex-direction: column;
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 }
