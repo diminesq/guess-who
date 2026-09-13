@@ -283,30 +283,29 @@ io.on('connection', (socket) => {
     const room = rooms[socket.roomCode];
     if (!room) return;
 
+    const guesser = room.players.find(p => p.id === socket.id);
     const opponent = room.players.find(p => p.id !== socket.id);
+
     if (!opponent || !opponent.secretChar) {
       return socket.emit('error_msg', 'Adversarul nu și-a ales încă personajul secret!');
     }
 
     const isCorrect = opponent.secretChar.id === guessedChar.id;
+    const winnerName = isCorrect ? guesser.name : opponent.name;
+    const loserName = isCorrect ? opponent.name : guesser.name;
 
-    if (isCorrect) {
-      io.to(socket.roomCode).emit('game_over', {
-        winner: socket.playerName,
-        loser: opponent.name,
-        targetChar: opponent.secretChar,
-        guesser: socket.playerName,
-        correct: true
+    // Trimite fiecărui jucător în parte rezultatul și personajul secret al ADVERSARULUI său
+    room.players.forEach((player) => {
+      const opp = room.players.find(p => p.id !== player.id);
+      io.to(player.id).emit('game_over', {
+        winner: winnerName,
+        loser: loserName,
+        opponentSecret: opp ? opp.secretChar : null,
+        guesser: guesser.name,
+        guessedChar: guessedChar,
+        correct: isCorrect
       });
-    } else {
-      io.to(socket.roomCode).emit('game_over', {
-        winner: opponent.name,
-        loser: socket.playerName,
-        targetChar: opponent.secretChar,
-        guesser: socket.playerName,
-        correct: false
-      });
-    }
+    });
   });
 
   socket.on('request_rematch', () => {
