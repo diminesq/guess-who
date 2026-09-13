@@ -54,7 +54,7 @@ const charactersDB = [
   { id: 302, name: "Dorian Popa", category: "youtuberi-ro", img: "dorian-popa.jpg" },
   { id: 303, name: "Faiăr Silviu", category: "youtuberi-ro", img: "faiar-silviu.jpg" },
   { id: 304, name: "Zaiafet", category: "youtuberi-ro", img: "zaiafet.jpg" },
-  { id: 305, name: "Creative Monkeyz", category: "youtuberi-ro", img: "creative-monkeyz.jpg" },
+  { id: 305, name: "Creative Monkeyz", category: "youtuberi-ro", img: "creative-monkeys.jpg" },
   { id: 306, name: "Maxsialtele", category: "youtuberi-ro", img: "maxsialtele.jpg" },
   { id: 307, name: "LecturăDeLaA-Z", category: "youtuberi-ro", img: "lectura-de-la-a-z.jpg" },
   { id: 308, name: "Ilie's Vlogs", category: "youtuberi-ro", img: "ilies-vlogs.jpg" },
@@ -78,7 +78,7 @@ const charactersDB = [
   { id: 402, name: "Mihai Bendeac", category: "actori-ro", img: "mihai-bendeac.jpg" },
   { id: 403, name: "Mihai Bobonete", category: "actori-ro", img: "mihai-bobonete.jpg" },
   { id: 404, name: "Marcel Iureș", category: "actori-ro", img: "marcel-iures.jpg" },
-  { id: 405, name: "Maia Morgenstern", category: "actori-ro", img: "maia-morgenstern.jpg" },
+  { id: 405, name: "Maia Morgenstern", category: "actori-ro", img: "maia-morgens.jpg" },
   { id: 406, name: "Horațiu Mălăele", category: "actori-ro", img: "horatiu-malaele.jpg" },
   { id: 407, name: "Gheorghe Dinică", category: "actori-ro", img: "gheorghe-dinica.jpg" },
   { id: 408, name: "Micuțu", category: "actori-ro", img: "micutu.jpg" },
@@ -198,9 +198,11 @@ let currentBoardList = [];
 
 const lobbyScreen = document.getElementById('lobbyScreen');
 const gameScreen = document.getElementById('gameScreen');
+const playerNameInput = document.getElementById('playerName');
 const gameCodeInput = document.getElementById('gameCode');
 const categorySelect = document.getElementById('categorySelect');
-const startLinkBtn = document.getElementById('startLinkBtn');
+const playBtn = document.getElementById('playBtn');
+const inviteBtn = document.getElementById('inviteBtn');
 const backBtn = document.getElementById('backBtn');
 const grid = document.getElementById('grid');
 const targetStatus = document.getElementById('targetStatus');
@@ -208,16 +210,18 @@ const myCardContainer = document.getElementById('myCardContainer');
 const myCardImg = document.getElementById('myCardImg');
 const myCardName = document.getElementById('myCardName');
 
+// Limitare la 4 cifre
 gameCodeInput.addEventListener('input', (e) => {
   e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
 });
 
-startLinkBtn.addEventListener('click', () => {
+// Click pe butonul PLAY
+playBtn.addEventListener('click', () => {
   const cat = categorySelect.value;
   const code = gameCodeInput.value.trim();
 
   if (!cat) {
-    alert('Alege o categorie din meniu!');
+    alert('Alege o categorie din listă!');
     return;
   }
 
@@ -233,19 +237,37 @@ startLinkBtn.addEventListener('click', () => {
   setupBoard(cat);
 });
 
+// Click pe butonul INVITE (copiază linkul în clipboard)
+inviteBtn.addEventListener('click', () => {
+  const cat = categorySelect.value;
+  const code = gameCodeInput.value.trim();
+
+  if (!cat || code.length !== 4) {
+    alert('Alege categoria și completează codul de 4 cifre înainte de invitație!');
+    return;
+  }
+
+  const inviteUrl = `${window.location.origin}${window.location.pathname}?cat=${encodeURIComponent(cat)}&code=${encodeURIComponent(code)}`;
+
+  navigator.clipboard.writeText(inviteUrl).then(() => {
+    alert('Linkul de invitație a fost copiat în clipboard! Trimite-l prietenului.');
+  }).catch(() => {
+    prompt('Copiază linkul manual:', inviteUrl);
+  });
+});
+
+// Click pe butonul LOBBY
 backBtn.addEventListener('click', () => {
   gameScreen.classList.remove('active');
   lobbyScreen.classList.add('active');
 });
 
+// Pregătirea celor 28 de cărți pe tablă
 function setupBoard(category) {
   let pool = charactersDB.filter(c => {
     if (category === 'mix-all') return true;
     if (category === 'mix-ro') return c.category.endsWith('-ro');
     if (category === 'mix-intl') return c.category.endsWith('-intl');
-    if (category === 'trapperi-all') return c.category.startsWith('trapperi');
-    if (category === 'youtuberi-all') return c.category.startsWith('youtuberi');
-    if (category === 'actori-all') return c.category.startsWith('actori');
     return c.category === category;
   });
 
@@ -265,6 +287,7 @@ function setupBoard(category) {
   renderBoard();
 }
 
+// Afișarea cartonașelor
 function renderBoard() {
   grid.innerHTML = '';
 
@@ -272,7 +295,6 @@ function renderBoard() {
     const card = document.createElement('div');
     card.className = 'card';
 
-    // Dacă vreun fișier are mici diferențe de scriere, pune un avatar clar ca siguranță
     const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=1a1d26&color=ffea79&size=300&bold=true`;
 
     card.innerHTML = `
@@ -291,7 +313,7 @@ function renderBoard() {
         if (myCardContainer) myCardContainer.style.display = "flex";
 
         gameState = "PLAYING";
-        targetStatus.innerHTML = "🎯 <b>Joc în desfășurare:</b> Elimină cărțile pe rând.";
+        targetStatus.innerHTML = "🎯 <b>Joc în desfășurare:</b> Elimină cărțile pe rând făcând click pe ele.";
         alert(`Ți-ai ales personajul: ${char.name}! A fost salvat în bara de sus.`);
         return;
       }
@@ -302,3 +324,13 @@ function renderBoard() {
     grid.appendChild(card);
   });
 }
+
+// Autocompletare când cineva accesează linkul primit prin Invite
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat');
+  const code = params.get('code');
+
+  if (cat && categorySelect) categorySelect.value = cat;
+  if (code && gameCodeInput) gameCodeInput.value = code;
+});
