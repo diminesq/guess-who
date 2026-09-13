@@ -8,7 +8,7 @@ const charactersDB = [
   { id: 104, name: "Connect-R", category: "singers-ro", img: "connect-r.jpg" },
   { id: 105, name: "Andra", category: "singers-ro", img: "andra.jpg" },
   { id: 106, name: "Irina Rimes", category: "singers-ro", img: "irina-rimes.jpg" },
-  { id: 107, name: "Carla's Dreams", category: "singers-ro", img: "carlas-dreams.jpg" },
+  { id: 107, name: "Carla's Dreams", category: "singers-ro", img: "carlas-dream.jpg" },
   { id: 108, name: "The Motans", category: "singers-ro", img: "the-motans.jpg" },
   { id: 109, name: "Alex Velea", category: "singers-ro", img: "alex-velea.jpg" },
   { id: 110, name: "Antonia", category: "singers-ro", img: "antonia.jpg" },
@@ -271,8 +271,8 @@ function renderBoard() {
   currentBoardList.forEach((char) => {
     const card = document.createElement('div');
     card.className = 'card';
-    
-    // Fallback automat daca vreun fisier lipseste sau are extensie diferita
+
+    // Dacă vreun fișier are mici diferențe de scriere, pune un avatar clar ca siguranță
     const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(char.name)}&background=1a1d26&color=ffea79&size=300&bold=true`;
 
     card.innerHTML = `
