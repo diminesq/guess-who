@@ -2,7 +2,7 @@ const socket = io();
 
 let currentBoard = [];
 let mySecretChar = null;
-let currentMode = "ELIMINATE"; // "ELIMINATE" sau "GUESS"
+let currentMode = "ELIMINATE";
 let isCreator = false;
 let gameStarted = false;
 
@@ -32,7 +32,7 @@ const modalCharImg = document.getElementById('modalCharImg');
 const modalCharName = document.getElementById('modalCharName');
 const rematchBtn = document.getElementById('rematchBtn');
 
-// Verificare automata de camera existenta cand se tasteaza codul
+// Verificare automată a codului de 4 cifre
 gameCodeInput.addEventListener('input', (e) => {
   e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
   const code = e.target.value.trim();
@@ -96,13 +96,13 @@ backBtn.addEventListener('click', () => {
   window.location.reload();
 });
 
-// Comutator intre cele doua butoane de actiune
+// Comutator butoane
 modeEliminateBtn.addEventListener('click', () => {
   currentMode = "ELIMINATE";
   modeEliminateBtn.classList.add('active');
   modeGuessBtn.classList.remove('active');
   document.body.classList.remove('guess-mode');
-  targetStatus.innerHTML = "❌ <b>Mod Eliminare activat:</b> Dă click pe un cartonaș ca să îl tai.";
+  targetStatus.innerHTML = "❌ <b>Mod Eliminare:</b> Dă click pe un cartonaș ca să îl tai.";
 });
 
 modeGuessBtn.addEventListener('click', () => {
@@ -110,10 +110,10 @@ modeGuessBtn.addEventListener('click', () => {
   modeGuessBtn.classList.add('active');
   modeEliminateBtn.classList.remove('active');
   document.body.classList.add('guess-mode');
-  targetStatus.innerHTML = "🎯 <b>MOD WILD GUESS!</b> Dă click pe cartonașul final pe care pariezi!";
+  targetStatus.innerHTML = "🎯 <b>MOD WILD GUESS!</b> Dă click pe cartonașul final pe care îl bănui!";
 });
 
-// Primire tabla de la server
+// Primire tablă inițială
 socket.on('game_init', ({ board, category, isCreator: creator }) => {
   currentBoard = board;
   isCreator = creator;
@@ -126,51 +126,55 @@ socket.on('game_init', ({ board, category, isCreator: creator }) => {
   myCardContainer.style.display = 'none';
 
   targetStatus.innerHTML = "👉 <b>Pasul 1:</b> Fă click pe cartonașul tău secret!";
-
   renderBoard();
 });
 
-// Actualizare status lobby / jucători
+// Status cameră
 socket.on('room_status', ({ playerCount, players }) => {
   if (!gameStarted && mySecretChar) {
     if (playerCount < 2) {
-      targetStatus.innerHTML = "⏳ Ți-ai ales cartonașul! Așteptăm adversarul să se conecteze...";
+      targetStatus.innerHTML = "⏳ Ți-ai ales cartonașul! Așteptăm adversarul să intre...";
     } else {
       targetStatus.innerHTML = "⏳ Așteptăm adversarul să-și aleagă cartonașul secret...";
     }
   }
 });
 
-// Ambii jucători sunt gata
+// Start rundă
 socket.on('both_ready', () => {
   gameStarted = true;
   modeControls.style.display = 'flex';
   currentMode = "ELIMINATE";
   modeEliminateBtn.classList.add('active');
   modeGuessBtn.classList.remove('active');
-  targetStatus.innerHTML = "⚔️ <b>Jocul a început!</b> Folosește „Elimină jucători” sau „Verifică cartonașul final”.";
+  targetStatus.innerHTML = "⚔️ <b>Jocul a început!</b> Pune întrebări, elimină cărți sau ghicește!";
 });
 
-// Rezultat meci
-socket.on('game_over', ({ winner, loser, targetChar, guesser, correct }) => {
+// SFÂRȘIT MECI - ARATĂ CARTONAȘUL ADVERSARULUI
+socket.on('game_over', ({ winner, loser, opponentSecret, guesser, guessedChar, correct }) => {
   gameOverModal.style.display = 'flex';
+  const myName = playerNameInput.value.trim() || "Jucător";
 
-  if (winner === (playerNameInput.value.trim() || "Jucător")) {
+  if (winner === myName) {
     modalTitle.innerHTML = "🏆 AI CÂȘTIGAT!";
     modalTitle.style.color = "#2ed573";
     modalDesc.innerHTML = correct 
-      ? `Bravo! L-ai ghicit corect pe adversar!` 
-      : `${loser} a încercat un Wild Guess și a greșit!`;
+      ? `Felicitări! L-ai ghicit pe adversar!` 
+      : `${loser} a încercat un Wild Guess pe <b>${guessedChar.name}</b> și a greșit!`;
   } else {
+    // Aici intră pierzătorul
     modalTitle.innerHTML = "💀 AI PIERDUT!";
     modalTitle.style.color = "#ff4757";
     modalDesc.innerHTML = correct 
-      ? `${winner} a ghicit corect personajul tău!` 
-      : `Ai greșit ghicirea! Adversarul câștigă automat.`;
+      ? `${winner} a ghicit corect că personajul tău era <b>${guessedChar.name}</b>!` 
+      : `Ai încercat un Wild Guess și ai greșit!`;
   }
 
-  modalCharName.textContent = targetChar.name;
-  tryLoadImage(modalCharImg, targetChar.base, `https://ui-avatars.com/api/?name=${encodeURIComponent(targetChar.name)}`);
+  // Afișează cartonașul secret al oponentului
+  if (opponentSecret) {
+    modalCharName.innerHTML = `<span style="color:#aaa; font-size:12px; display:block; margin-bottom:4px;">PERSONAJUL SECRET AL ADVERSARULUI:</span><b>${opponentSecret.name}</b>`;
+    tryLoadImage(modalCharImg, opponentSecret.base, `https://ui-avatars.com/api/?name=${encodeURIComponent(opponentSecret.name)}`);
+  }
 });
 
 // Rematch
@@ -193,7 +197,7 @@ socket.on('error_msg', (msg) => {
   alert(msg);
 });
 
-// Incarcare inteligenta imagini (jpg -> png -> jpeg -> webp)
+// Încărcare imagini
 function tryLoadImage(imgElem, baseName, fallbackUrl) {
   const extensions = ['.jpg', '.png', '.jpeg', '.webp'];
   let extIndex = 0;
@@ -234,7 +238,7 @@ function renderBoard() {
     card.appendChild(label);
 
     card.addEventListener('click', () => {
-      // 1. ALEGERE SECRETĂ LA ÎNCEPUT
+      // 1. Faza de alegere secretă
       if (!mySecretChar) {
         mySecretChar = char;
         tryLoadImage(myCardImg, char.base, fallback);
@@ -242,19 +246,19 @@ function renderBoard() {
         myCardContainer.style.display = "flex";
 
         socket.emit('select_secret', char);
-        alert(`Ți-ai ales personajul: ${char.name}! A fost fixat sus.`);
+        alert(`Ți-ai ales personajul: ${char.name}! A fost fixat în bara de sus.`);
         return;
       }
 
-      // 2. MODUL VERIFICĂ CARTONAȘUL FINAL (WILD GUESS)
+      // 2. Modul Wild Guess
       if (currentMode === "GUESS") {
-        if (confirm(`Ești sigur că personajul adversarului este ${char.name}? Dacă greșești, pierzi automat!`)) {
+        if (confirm(`Ești sigur că personajul adversarului este ${char.name}? Dacă greșești, pierzi meciul!`)) {
           socket.emit('make_guess', char);
         }
         return;
       }
 
-      // 3. MODUL ELIMINĂ JUCĂTORI
+      // 3. Modul Eliminare
       card.classList.toggle('eliminated');
     });
 
