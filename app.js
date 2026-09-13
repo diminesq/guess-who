@@ -8,7 +8,7 @@ const charactersDB = [
   { id: 104, name: "Connect-R", category: "singers-ro", base: "connect-r" },
   { id: 105, name: "Andra", category: "singers-ro", base: "andra" },
   { id: 106, name: "Irina Rimes", category: "singers-ro", base: "irina-rimes" },
-  { id: 107, name: "Carla's Dreams", category: "singers-ro", base: "carlas-dreams" },
+  { id: 107, name: "Carla's Dreams", category: "singers-ro", base: "carlas-dream" },
   { id: 108, name: "The Motans", category: "singers-ro", base: "the-motans" },
   { id: 109, name: "Alex Velea", category: "singers-ro", base: "alex-velea" },
   { id: 110, name: "Antonia", category: "singers-ro", base: "antonia" },
